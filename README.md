@@ -1,4 +1,4 @@
-# CAD Payment Links
+# CAD Payment Links 
 
 Simple static page for partners to copy Stripe payment links (CAD 100–1500) and share with clients. No backend; hosted on GitHub Pages.
 
@@ -91,3 +91,4 @@ Example: if your username is `jane` and the repo is `payment-links`, the URL is
 `https://jane.github.io/payment-links/`
 
 Share that link with your partners so they can copy and share payment links with clients.
+
