@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Stripe Payment Links</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --bg-card: rgba(255, 255, 255, 0.03);
+      --bg-card-hover: rgba(255, 255, 255, 0.06);
+      --border: rgba(255, 255, 255, 0.06);
+      --accent: #d4b84a;
+      --accent-dim: #a89030;
+      --accent-glow: rgba(212, 184, 74, 0.22);
+      --text: #e5e5e5;
+      --text-muted: #737373;
+      --copy-border: rgba(212, 184, 74, 0.55);
+      --copy-bg-hover: rgba(212, 184, 74, 0.12);
+      --copy-copied: rgba(74, 124, 89, 0.25);
+      --copy-copied-border: rgba(74, 124, 89, 0.5);
+      --radius: 14px;
+      --radius-btn: 999px;
+      --safe-top: env(safe-area-inset-top, 0);
+      --safe-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    * { box-sizing: border-box; }
+    html { -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Outfit', system-ui, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      background: var(--bg);
+      background-image: radial-gradient(ellipse 120% 80% at 50% 0%, rgba(255, 255, 255, 0.02), transparent 50%);
+      color: var(--text);
+      padding: calc(1.5rem + var(--safe-top)) 1rem calc(2rem + var(--safe-bottom));
+      padding-left: max(1rem, env(safe-area-inset-left));
+      padding-right: max(1rem, env(safe-area-inset-right));
+    }
+
+    .wrap {
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    h1 {
+      font-size: clamp(1.4rem, 5vw, 1.75rem);
+      font-weight: 700;
+      margin: 0 0 0.4rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem 1.15rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      opacity: 0;
+      transform: translateY(12px);
+      animation: cardIn 0.45s ease forwards;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ----- Laptop / Desktop ----- */
+    @media (min-width: 768px) {
+      body {
+        padding: 2.5rem 2rem calc(2.5rem + var(--safe-bottom));
+        background-image: radial-gradient(ellipse 100% 60% at 50% -20%, rgba(255, 255, 255, 0.03), transparent 45%);
+      }
+
+      .wrap {
+        max-width: 960px;
+      }
+
+      header {
+        margin-bottom: 2.5rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+        letter-spacing: -0.03em;
+      }
+
+      h1::after {
+        content: '';
+        display: block;
+        width: 3rem;
+        height: 3px;
+        margin: 0.75rem auto 0;
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        border-radius: 2px;
+        opacity: 0.8;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+
+      .list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+
+      .row {
+        padding: 1.25rem 1.35rem;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.1rem;
+        text-align: center;
+        border-radius: 16px;
+      }
+
+      .row .price {
+        font-size: 1.25rem;
+      }
+
+      .row .price span {
+        display: block;
+        margin-top: 0.15rem;
+        font-size: 0.8em;
+      }
+
+      .row .copy {
+        width: 100%;
+        min-height: 48px;
+        padding: 0.65rem 1.25rem;
+        font-size: 0.95rem;
+      }
+
+      @media (hover: hover) {
+        .row:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.06);
+          border-color: rgba(255, 255, 255, 0.14);
+        }
+
+        .row:hover .copy {
+          border-color: var(--accent);
+          box-shadow: 0 0 20px var(--accent-glow);
+        }
+      }
+    }
+
+    @media (min-width: 1100px) {
+      .list {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+      }
+
+      .row {
+        padding: 1.35rem 1.5rem;
+      }
+    }
+
+    .row:nth-child(1)  { animation-delay: 0.05s; }
+    .row:nth-child(2)  { animation-delay: 0.1s; }
+    .row:nth-child(3)  { animation-delay: 0.15s; }
+    .row:nth-child(4)  { animation-delay: 0.2s; }
+    .row:nth-child(5)  { animation-delay: 0.25s; }
+    .row:nth-child(6)  { animation-delay: 0.3s; }
+    .row:nth-child(7)  { animation-delay: 0.35s; }
+    .row:nth-child(8)  { animation-delay: 0.4s; }
+    .row:nth-child(9)  { animation-delay: 0.45s; }
+    .row:nth-child(10) { animation-delay: 0.5s; }
+    .row:nth-child(11) { animation-delay: 0.55s; }
+
+    @keyframes cardIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (hover: hover) and (max-width: 767px) {
+      .row:hover {
+        background: var(--bg-card-hover);
+        border-color: rgba(255, 255, 255, 0.12);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      }
+    }
+
+    .row:active .copy { transform: scale(0.96); }
+
+    .price {
+      font-weight: 600;
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+    }
+
+    .price span {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.85em;
+    }
+
+    .copy {
+      --touch: min(44px, 11vw);
+      min-width: var(--touch);
+      min-height: var(--touch);
+      padding: 0.55rem 1.25rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: transparent;
+      border: 1px solid var(--copy-border);
+      border-radius: var(--radius-btn);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.15s, border-color 0.2s, background 0.2s, box-shadow 0.2s, color 0.2s;
+    }
+
+    @media (hover: hover) {
+      .copy:hover {
+        background: var(--copy-bg-hover);
+        border-color: var(--accent);
+        box-shadow: 0 0 16px var(--accent-glow);
+        transform: scale(1.02);
+      }
+    }
+
+    .copy:active { transform: scale(0.96); }
+
+    .copy.copied {
+      color: #7cb88a;
+      border-color: var(--copy-copied-border);
+      background: var(--copy-copied);
+    }
+
+    .toast {
+      position: fixed;
+      left: 1rem;
+      right: 1rem;
+      left: max(1rem, env(safe-area-inset-left));
+      right: max(1rem, env(safe-area-inset-right));
+      bottom: calc(1.25rem + var(--safe-bottom));
+      margin: 0 auto;
+      max-width: 320px;
+      padding: 0.75rem 1rem;
+      background: rgba(15, 15, 15, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .footer {
+      margin-top: 2rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Stripe Payment Links</h1>
+      <p class="subtitle">Built in 5 minutes. Works forever.</p>
+    </header>
+
+    <div class="list" id="list"></div>
+
+    <p class="footer">Zero features. Maximum usefulness.</p>
+  </div>
+
+  <div class="toast" id="toast">Link acquired.</div>
+
+  <script>
+    const PAYMENT_LINKS = {
+      100:  'https://buy.stripe.com/00w00j3HUeXB68y5ch1sQ08',
+      200:  'https://buy.stripe.com/fZu28r2DQ8zd54u6gl1sQ07',
+      300:  'https://buy.stripe.com/dRmeVdemy3eT9kKfQV1sQ04',
+      400:  'https://buy.stripe.com/00waEXemy3eTbsS8ot1sQ06',
+      499:  'https://buy.stripe.com/28EdR9ceqeXB68yawB1sQ00',
+      600:  'https://buy.stripe.com/fZu8wPguG3eT1SicEJ1sQ0b',
+      700:  'https://buy.stripe.com/8x214ndiu7v9eF4cEJ1sQ09',
+      800:  'https://buy.stripe.com/eVq9ATfqC5n12Wm0W11sQ01',
+      900:  'https://buy.stripe.com/7sYcN5fqC7v97cCbAF1sQ0c',
+      999:  'https://buy.stripe.com/aFaaEX0vI3eT0OeawB1sQ05',
+      1500: 'https://buy.stripe.com/6oU14n3HU02H54u3491sQ0a',
+    };
+
+    const TOAST_MESSAGES = [
+      'Link acquired.',
+      'Clipboard upgraded.',
+      'Success. Act normal.',
+      'Ready to send.',
+      'Go cause financial damage.',
+      'Paste with confidence.',
+    ];
+
+    const list = document.getElementById('list');
+    const toast = document.getElementById('toast');
+
+    function showToast() {
+      toast.textContent = TOAST_MESSAGES[Math.floor(Math.random() * TOAST_MESSAGES.length)];
+      toast.classList.add('show');
+      clearTimeout(toast.tid);
+      toast.tid = setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    function copyLink(url, btn) {
+      navigator.clipboard.writeText(url).then(() => {
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        showToast();
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 1800);
+      }).catch(() => {
+        btn.textContent = 'Nope';
+        setTimeout(() => btn.textContent = 'Copy', 1500);
+      });
+    }
+
+    const amounts = [100, 200, 300, 400, 499, 600, 700, 800, 900, 1000, 1500];
+    amounts.forEach(amount => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <span class="price">CAD ${amount.toLocaleString()}<span> / payment</span></span>
+        <button type="button" class="copy">Copy</button>
+      `;
+      const btn = row.querySelector('button');
+      btn.addEventListener('click', () => copyLink(PAYMENT_LINKS[amount], btn));
+      list.appendChild(row);
+    });
+  </script>
+</body>
+</html>
